@@ -7,7 +7,7 @@ import (
 )
 
 type Config struct {
-	Level string `envcongig:"LEVEL" required:"true"`
+	Level string `envcongig:"LEVEL" default:"DEBUG"`
 	Folder string `envconfig:"FOLDER" requires:"true"`
 }
 

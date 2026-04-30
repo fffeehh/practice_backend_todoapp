@@ -11,6 +11,12 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+type loggerContextKey struct {}
+
+var (
+	key = loggerContextKey{}
+)
+
 type Logger struct {
 	// не даем название этому полю, чтобы встроить его в структуру логгера. Таким образом, мы можем пользоваться функциональностью заплоггера напрямую через свою структуру.
 	*zap.Logger
@@ -19,9 +25,14 @@ type Logger struct {
 	file *os.File
 }
 
+// функция, которая кладет ключ в контекст
+func ToContext(ctx context.Context, log *Logger) context.Context {
+	return context.WithValue(ctx, key, log)
+}
+
 // Функция для получения логгера из контекста. Необходима отдельная функция, т.к. делать это приходится довольно часто. Первое использование в common.go
 func FromContext(ctx context.Context) *Logger {
-	log, ok := ctx.Value("log").(*Logger)
+	log, ok := ctx.Value(key).(*Logger)
 	if !ok {
 		panic("no logger in context")
 	}

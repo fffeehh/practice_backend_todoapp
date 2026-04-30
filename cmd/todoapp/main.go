@@ -62,8 +62,8 @@ logger.Debug("initializing postgres connection pool")
 		logger,
 		core_http_middleware.RequestID(),
 		core_http_middleware.Logger(logger),
-		core_http_middleware.Panic(),
 		core_http_middleware.Trace(),
+		core_http_middleware.Panic(),
 	)
 	
 	// создаем апи роутер первой версии

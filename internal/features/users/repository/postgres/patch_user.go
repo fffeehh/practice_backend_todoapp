@@ -29,7 +29,7 @@ func (r *UsersRepository) PatchUser(
 		id,
 		version,
 		full_name,
-		phone_number
+		phone_number;
 	`
 
 	row := r.pool.QueryRow(

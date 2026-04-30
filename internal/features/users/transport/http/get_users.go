@@ -6,7 +6,7 @@ import (
 
 	core_logger "github.com/fffeehh/practice_backend_todoapp/internal/core/logger"
 	core_http_response "github.com/fffeehh/practice_backend_todoapp/internal/core/transport/http/response"
-	core_http_utils "github.com/fffeehh/practice_backend_todoapp/internal/core/transport/http/utils"
+	core_http_request "github.com/fffeehh/practice_backend_todoapp/internal/core/transport/http/request"
 )
 
 // DTO которая представляет http ответ
@@ -47,12 +47,17 @@ func (h *UsersHTTPHandler) GetUsers(rw http.ResponseWriter, r *http.Request) {
 
 // получение query параметров limit и offset
 func getLimitOffsetQueryParams(r *http.Request) (*int, *int, error) {
-	limit, err := core_http_utils.GetIntQueryParam(r, "limit")
+	const (
+		limitQueryParamKey = "limit"
+		offsetQueryParamKey = "offset"
+	)
+
+	limit, err := core_http_request.GetIntQueryParam(r, "limit")
 	if err != nil {
 		return nil, nil, fmt.Errorf("get 'limit' query param: %w", err)
 	}
 
-	offset, err := core_http_utils.GetIntQueryParam(r, "offset")
+	offset, err := core_http_request.GetIntQueryParam(r, "offset")
 	if err != nil {
 		return nil, nil, fmt.Errorf("get 'offset' query param: %w", err)
 	}

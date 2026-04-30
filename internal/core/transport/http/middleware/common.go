@@ -1,7 +1,6 @@
 package core_http_middleware
 
 import (
-	"context"
 	"net/http"
 	"time"
 
@@ -54,7 +53,10 @@ func Logger(log *core_logger.Logger) Middleware {
 			// передаем наш логгер в хэндлер через контекст.
 			// здесь мы создаем дочерний контекст родительского контекста хэндлера, но в этом дочернем 
 			// контексте мы создаем еще и значение, в которое кладем наш логгер
-			ctx := context.WithValue(r.Context(), "log", l)
+			// ctx := context.WithValue(r.Context(), core_logger.LoggerContextKey, l)
+
+
+			ctx := core_logger.ToContext(r.Context(), l)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -105,7 +107,7 @@ func Trace() Middleware {
 
 			log.Debug(
 				"<<< done HTTP request",
-				zap.Int("status_code", rw.GetStatusCodeOrPanic()),
+				zap.Int("status_code", rw.GetStatusCode()),
 				zap.Duration("latency", time.Since(before)),
 				)
 		})
