@@ -30,7 +30,7 @@ env-port-forward:
 	@docker compose up -d port-forwarder
 
 env-port-close:
-	@docker compose down port-forwarder
+	@docker compose down port-forwarder 
 
 migrate-create:
 	@if [ -z "$(seq)" ]; then \
@@ -77,3 +77,9 @@ todoapp-run:
 	export POSTGRES_HOST=localhost && \
 	go mod tidy && \
 	go run ${PROJECT_ROOT}/cmd/todoapp/main.go
+
+todoapp-deploy:
+	@docker compose up -d --build todoapp
+
+ps:
+	@docker compose ps
