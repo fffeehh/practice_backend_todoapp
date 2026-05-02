@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	core_config "github.com/fffeehh/practice_backend_todoapp/internal/core/config"
 	core_logger "github.com/fffeehh/practice_backend_todoapp/internal/core/logger"
 	core_postgres_pool "github.com/fffeehh/practice_backend_todoapp/internal/core/repository/postgres/pool"
 	core_http_middleware "github.com/fffeehh/practice_backend_todoapp/internal/core/transport/http/middleware"
@@ -21,13 +22,11 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	timeZone = time.UTC
-)
-
 func main(){
-	// выставляем зону UTC
-	time.Local = timeZone
+	// создаем глобальный конфиг приложения
+	cfg := core_config.NewConfigMust()
+	// выставляем зону из конфига (UTC по умолчанию), чтобы не хардкодить ее в код
+	time.Local = cfg.TimeZone
 
 	// создаем родительский контекст для передачи в сервер, который будет завязан на системных сигналах
 	ctx, cancel := signal.NotifyContext(
@@ -47,7 +46,7 @@ func main(){
 	}
 	defer logger.Close()
 
-	logger.Debug("application time zone", zap.Any("zone", timeZone))
+	logger.Debug("application time zone", zap.Any("zone", time.Local))
 
 	// создаем пул
 logger.Debug("initializing postgres connection pool")
