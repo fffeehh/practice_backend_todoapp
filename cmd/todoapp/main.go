@@ -13,6 +13,9 @@ import (
 	core_postgres_pool "github.com/fffeehh/practice_backend_todoapp/internal/core/repository/postgres/pool"
 	core_http_middleware "github.com/fffeehh/practice_backend_todoapp/internal/core/transport/http/middleware"
 	core_http_server "github.com/fffeehh/practice_backend_todoapp/internal/core/transport/http/server"
+	statistics_postgres_repository "github.com/fffeehh/practice_backend_todoapp/internal/features/statistics/repository/postgres"
+	statistics_service "github.com/fffeehh/practice_backend_todoapp/internal/features/statistics/service"
+	statistics_transport_http "github.com/fffeehh/practice_backend_todoapp/internal/features/statistics/transport/http"
 	tasks_postgres_repository "github.com/fffeehh/practice_backend_todoapp/internal/features/tasks/repository/postgres"
 	tasks_service "github.com/fffeehh/practice_backend_todoapp/internal/features/tasks/service"
 	tasks_transport "github.com/fffeehh/practice_backend_todoapp/internal/features/tasks/transport/http"
@@ -70,6 +73,11 @@ logger.Debug("initializing postgres connection pool")
 	tasksService := tasks_service.NewTasksService(tasksRepository)
 	tasksTransportHTTP := tasks_transport.NewTasksHTTPService(tasksService)
 
+	logger.Debug("initializing feature", zap.String("feature", "tasks"))
+	statisticsRepository := statistics_postgres_repository.NewStatisticsRepository(pool)
+	statisticsService := statistics_service.NewStatisticsService(statisticsRepository)
+	statisticsTransportHTTP := statistics_transport_http.NewStatisticsHTTPHandler(statisticsService)
+
 
 	logger.Debug("initializing HTTP server")
 
@@ -88,6 +96,7 @@ logger.Debug("initializing postgres connection pool")
 	// регистрируем полученые из usersTransportHTTP роуты в apiVersionRouter
 	apiVersionRouter.RegisterRoutes(usersTransoportHTTP.Routes()...) // передаем роуты
 	apiVersionRouter.RegisterRoutes(tasksTransportHTTP.Routes()...)
+	apiVersionRouter.RegisterRoutes(statisticsTransportHTTP.Routes()...)
 
 
 	/* 
